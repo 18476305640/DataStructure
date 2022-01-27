@@ -19,7 +19,9 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
             this.unit = unit;
             this.parent = parent;
         }
+        //判断当前节点是否为叶子节点
         boolean isLeaf() {
+            //没有子节点，子节点都为null———叶子节点
             if(this.left != null || this.right != null) {
                 return false;
             }
@@ -27,12 +29,14 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
 
         }
         boolean isPlump() {
+            //左右节点都有节点
             return this.left != null && this.right != null;
         }
     }
 
 
 
+    //一个抽象类
     protected static abstract class Visitor<U> {
         public boolean stop = false;
         public abstract boolean visit(U unit);
