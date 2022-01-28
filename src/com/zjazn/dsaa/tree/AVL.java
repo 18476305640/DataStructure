@@ -141,23 +141,26 @@ public class AVL<U> extends BinarySearchTree<U>{
         //获取g_node节点的父节点
         AVLNode<U> g_node_parent = (AVLNode<U>) g_node.parent;
 
+        //分三种情况,将g_node挂上树上,注意需要维护g_node 的parent
         if (g_node_parent != null) {
-            if (g_node_parent.left == g_node) {
+            if (g_node_parent.left == g_node) {//g_node节点要挂在g_node_parent的左节点上
                 g_node_parent.left = p_node;
                 p_node.parent = g_node_parent;
-            }else {
+            }else {//g_node节点要挂在g_node_parent的右节点上
                 g_node_parent.right = p_node;
                 p_node.parent = g_node_parent;
             }
-        }else {
-            //如何不平衡点是根节点时
+        }else {//如果不平衡点是根节点时
             root = p_node;
             p_node.parent = null;
         }
+        //卸下p_node的左节点,保存下来
         AVLNode<U> p_node_left_node =  (AVLNode<U>)p_node.left;
+        //将g_node节点放在p_node上并维护好g_node的parent属性
         p_node.left = g_node;
         g_node.parent = p_node;
         if (p_node_left_node != null) {
+            //将保留下来的p_node的左节点放在g_node节点上并维护好parent
             g_node.right = p_node_left_node;
             p_node_left_node.parent = g_node;
         }else {
@@ -168,12 +171,14 @@ public class AVL<U> extends BinarySearchTree<U>{
         update_node_height(g_node);
         update_node_height(p_node);
     }
-    protected void RL_Balance(AVLNode<U> g_node,AVLNode<U> p_node,AVLNode<U> n_node) {
-        LL_Balance(p_node,n_node);
-        RR_Balance(g_node,n_node);
-    }
-    protected void LL_Balance(AVLNode<U> g_node,AVLNode<U> p_node) {
 
+    /**
+     * LL型采用的是右旋
+     * 在RR型的基础上,将left变为right,right变为left,是相反的
+     * @param g_node
+     * @param p_node
+     */
+    protected void LL_Balance(AVLNode<U> g_node,AVLNode<U> p_node) {
         //获取g_node节点的父节点
         AVLNode<U> g_node_parent = (AVLNode<U>) g_node.parent;
 
@@ -206,6 +211,24 @@ public class AVL<U> extends BinarySearchTree<U>{
 
 
     }
+
+    /**
+     * RL型,对下面的p,n看作LL型,进行右旋,然后对上面的g,n看作RR进行左旋
+     * @param g_node
+     * @param p_node
+     * @param n_node
+     */
+    protected void RL_Balance(AVLNode<U> g_node,AVLNode<U> p_node,AVLNode<U> n_node) {
+        LL_Balance(p_node,n_node);
+        RR_Balance(g_node,n_node);
+    }
+
+    /**
+     * LR型,对下面的p,n看作RR型,进行左旋,然后对上面的g,n看作LL进行右旋
+     * @param g_node
+     * @param p_node
+     * @param n_node
+     */
     protected void LR_Balance(AVLNode<U> g_node,AVLNode<U> p_node,AVLNode<U> n_node) {
         RR_Balance(p_node,n_node);
         LL_Balance(g_node,n_node);
