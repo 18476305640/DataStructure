@@ -138,7 +138,7 @@ public class BinarySearchTree<U> extends BinaryTree<U>  {
         }
 
     }
-    private Node<U> node(U unit) {
+    protected Node<U> node(U unit) {
         if(unit == null) return null;
         Node<U> _node = root;
         while (_node != null) {

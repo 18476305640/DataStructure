@@ -17,7 +17,7 @@ public class AVL<U> extends BinarySearchTree<U>{
             size++;
             //新添加节点的是叶子节点即高度为1
             ((AVLNode)root).height = 1;
-            Balance((AVLNode<U>) root);
+            BalanceByAdd((AVLNode<U>) root);
             return;
         }
         //查看插在树的位置
@@ -47,11 +47,66 @@ public class AVL<U> extends BinarySearchTree<U>{
         size++;
         //新添加节点的是叶子节点即高度为1
         uNode.height = 1;
-        Balance(uNode);
+        BalanceByAdd(uNode);
 
     }
-    //恢复平衡
-    protected void Balance(AVLNode<U> node) {
+
+    /**
+     * 将原来的删除节点的程序上加上调用恢复平衡的方法
+     * @param unit
+     */
+    public void remove(U unit) {
+        Node<U> node =  node(unit);
+        if (node == null) return;
+        size--;
+        if( node.isPlump() ) {
+            //删除的是度为2的节点, next_node是后继节点
+            Node<U> next_node = rearNode(node);
+            U new_unit = next_node.unit;
+            remove(new_unit);
+            node.unit = new_unit;
+
+        }else {
+            if ( node.isLeaf() ) {
+                //度为0的节点/叶子节点
+                if(node.parent == null) {
+                    root = null;
+                }else if(node.parent.left == node){
+                    node.parent.left = null;
+                }else {
+                    node.parent.right = null;
+                }
+
+            }else {
+                //度为1的节点
+                Node<U> _parent = node.parent;
+                if(node.parent == null) {
+                    //度为1的根节点
+                    root = node.left!=null?node.left:node.right;
+                    root.parent = null;
+
+                }else if(node.parent.left == node){
+                    node.parent.left = node.left!=null?node.left:node.right;
+                    _parent.left.parent = _parent;
+                }else {
+                    node.parent.right = node.left!=null?node.left:node.right;
+                    _parent.right.parent = _parent;
+                }
+
+            }
+            //恢复平衡，这跟添加是一样的代码，唯一不同是就算找到了不平衡的节点，恢复了平衡，还是要向上找不平衡的祖父节点
+            BalanceByRemove((AVLNode<U>) node);
+
+
+        }
+
+    }
+
+    /**
+     * 恢复平衡，找到了不平衡的节点，恢复了平衡程序就可以结束了
+     * @param node
+     */
+    protected void BalanceByAdd(AVLNode<U> node) {
         AVLNode<U> g_node = (AVLNode<U>) node.parent;
         while (g_node != null) {
             if (!isBalance(g_node)) {
@@ -91,15 +146,58 @@ public class AVL<U> extends BinarySearchTree<U>{
                 return;
 
             }else {
-                //平衡——更新高度
-                AVLNode<U> height_max_node = tall_child_node(g_node);
-                if (height_max_node == null) {
-                    g_node.height = 1;
+                //更新节点高度（g_node）
+                update_node_height(g_node);
+            }
+            g_node = (AVLNode<U>)g_node.parent;
+        }
+    }
+
+    /**
+     * 恢复平衡，这跟添加是一样的代码，唯一不同是就算找到了不平衡的节点，恢复了平衡，还是要向上找不平衡的祖父节点
+     * @param node
+     */
+    protected void BalanceByRemove(AVLNode<U> node) {
+        AVLNode<U> g_node = (AVLNode<U>) node.parent;
+        while (g_node != null) {
+            if (!isBalance(g_node)) {
+                //不平衡，恢复平衡
+                System.out.println("失衡了,g是："+g_node.unit);
+                //开始判断类型
+                AVLNode<U> p_node = tall_child_node(g_node);
+                AVLNode<U> n_node = tall_child_node(p_node);
+                if(tall_child_node(g_node) == g_node.left) {
+                    //LL或LR
+                    System.out.println("LL或LR");
+                    if (n_node == p_node.left) {
+                        //LL
+                        System.out.println("LL");
+                        LL_Balance(g_node,p_node);
+                    }else {
+                        //LR
+                        System.out.println("LR");
+                        LR_Balance(g_node,p_node,n_node);
+                    }
                 }else {
-                    g_node.height = height_max_node.height + 1;
+                    //RR或RL
+                    System.out.println("RR或RL");
+                    if (n_node == p_node.right) {
+                        //RR
+                        System.out.println("RR");
+                        //调用指定类型恢复平衡的方法
+                        RR_Balance(g_node,p_node);
+
+                    }else {
+                        //RL
+                        System.out.println("RL");
+                        RL_Balance(g_node,p_node,n_node);
+                    }
+
                 }
 
-
+            }else {
+                //更新节点高度（g_node）
+                update_node_height(g_node);
             }
             g_node = (AVLNode<U>)g_node.parent;
         }
@@ -112,12 +210,14 @@ public class AVL<U> extends BinarySearchTree<U>{
         return Math.abs(left_height - right_height) < 2;
 
     }
-    //返回高度高的子节点
+
+    //返回高度高的子节点,在恢复平衡的代码上，找到g节点的基础上，可以帮助找到p,n节点
     protected AVLNode<U> tall_child_node(AVLNode<U> node) {
         AVLNode<U> left_node = (AVLNode<U>) node.left;
         AVLNode<U> right_node = (AVLNode<U>) node.right;
         int left_height = left_node == null ? 0: left_node.height;
         int right_height = right_node == null ? 0: right_node.height;
+        //如果相等，两边都可以RR RL或LLg LR 应用哪个都是合理的
         return (left_height > right_height)?left_node:right_node;
     }
     //本质是依靠子节点的高度更新自身的高度
@@ -129,6 +229,7 @@ public class AVL<U> extends BinarySearchTree<U>{
             node.height = 1;
         }
     }
+
 
     /**
      * RR型恢复平衡
@@ -233,5 +334,6 @@ public class AVL<U> extends BinarySearchTree<U>{
         RR_Balance(p_node,n_node);
         LL_Balance(g_node,n_node);
     }
+
 
 }
