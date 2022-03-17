@@ -37,7 +37,7 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
 
 
     //一个抽象类
-    protected static abstract class Visitor<U> {
+    public static abstract class Visitor<U> {
         public boolean stop = false;
         public abstract boolean visit(U unit);
     }
@@ -54,34 +54,34 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
         if(u == null) throw new IllegalArgumentException("插入的节点为空");
     }
 
-    //前序遍历
+    //前序遍历——“根左右”，递归左右子树都要查看是否暂停（visitor.stop）
     protected void preorderTraversal(Node<U> node, Visitor<U> visitor) {
-        if(node == null || visitor.stop) return;
-        visitor.stop = visitor.visit(node.unit);
+        if(node == null || visitor.stop) return; //如果要操作的节点不存在（下面传递的左右子树），直接返回
+        visitor.stop = visitor.visit(node.unit);//读取根节点
         if(visitor.stop) return;
-        preorderTraversal(node.left,visitor);
+        preorderTraversal(node.left,visitor);//递归左子树
         if(visitor.stop) return;
-        preorderTraversal(node.right,visitor);
+        preorderTraversal(node.right,visitor);//递归右子树
     }
-    //后序遍历
+    //后序遍历——即“左右根”
     protected void postderTraversal(Node<U> node, Visitor<U> visitor) {
-        if(node == null || visitor.stop) return;
-        visitor.stop = visitor.visit(node.unit);
+        if(node == null || visitor.stop) return;//如果要操作的节点不存在（下面传递的左右子树），直接返回
+
         if(visitor.stop) return;
-        postderTraversal(node.right,visitor);
+        postderTraversal(node.left,visitor); //递归左子树
         if(visitor.stop) return;
-        postderTraversal(node.left,visitor);
+        postderTraversal(node.right,visitor);    //递归右子树
+        visitor.stop = visitor.visit(node.unit); //访问根节点
 
 
     }
-    //中序遍历  升降序
+    //中序遍历——“左根右”  升降序
     protected void inorderTraversal(Node<U> node,Visitor<U> visitor) {
-        if(node == null) return;
-        inorderTraversal(node.left,visitor);
+        if(node == null) return; //如果要操作的节点不存在（下面传递的左右子树），直接返回
+        inorderTraversal(node.left,visitor); //递归左子树
+        visitor.stop = visitor.visit(node.unit); //访问根节点
         if(visitor.stop) return;
-        visitor.stop = visitor.visit(node.unit);
-        System.out.print("_"+node.unit+"的前驱节点是："+(rearNode(node) != null?rearNode(node).unit:"null")+"_\t");
-        inorderTraversal(node.right,visitor);
+        inorderTraversal(node.right,visitor); //递归右子树
     }
     //层序遍历
     protected void LevelOrderTraversal(Node<U> node,Visitor<U> visitor) {
@@ -240,6 +240,7 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
      */
     @Override
     public String toString() {
+
         return BinaryTrees.printString(this);
     }
 

@@ -152,10 +152,12 @@ public class BinarySearchTree<U> extends BinaryTree<U>  {
         }
         return null;
     }
+    //遍历树
     public void iteration(Visitor<U> visitor ) {
-        //inorderTraversal
-        //preorderTraversal
-        inorderTraversal(root,visitor);
+        //inorderTraversal 中序
+        //preorderTraversal 前序
+        //postderTraversal 后序
+        postderTraversal(root,visitor);
     }
     //比较两个节点，返回0时，两个元素相同,大于0左边大
     public int compare(U u1, U u2) {
@@ -164,6 +166,7 @@ public class BinarySearchTree<U> extends BinaryTree<U>  {
         }
         return ((Comparable<U>)u1).compareTo(u2);
     }
+
 
 
 }
