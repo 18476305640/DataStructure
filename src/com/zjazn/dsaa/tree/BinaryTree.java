@@ -53,6 +53,15 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
      * 前序遍历（递归）： [根]左右
      * 中序遍历（递归）: 左[根]右
      * 后序遍历（递归）： 左右[根]
+     *
+     * #从遍历的结果中获取信息
+     * 前序遍历：第一个节点是"根节点"
+     * 中序遍历：根节点左边是左子树，右边是右子树
+     * 后序遍历：最后一个是“根节点”
+     *     //重构二叉树：利用遍历的结构可推出原二叉树
+     *     //前序遍历 + 中序遍历
+     *     //后序遍历 + 中序遍历
+     *     //前序遍历 + 后序遍历  当是一个真二叉树时
      */
     //前序遍历——“根左右”，递归左右子树都要查看是否暂停（visitor.stop）
     protected void preorderTraversal(Node<U> node, Visitor<U> visitor) {
