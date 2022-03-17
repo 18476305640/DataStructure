@@ -9,10 +9,11 @@ public class test {
     public static void main(String[] args) {
 
 
+//        AVL<Integer> bst = new AVL<>();
         AVL<Integer> bst = new AVL<>();
 //        int[] arr = new int[]{5, 2, 10, 1, 3, 7,9,10,11,13,15,17,19,14};
 
-        int[] arr = new int[]{5,2,10,1,3,7,11};
+        int[] arr = new int[]{5,3,6,2,4,8};
         for (int i = 0; i < arr.length; i++) {
             bst.add(arr[i]);
         }

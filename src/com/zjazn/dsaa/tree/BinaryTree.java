@@ -43,17 +43,17 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
     }
 
 
-    /**
-     * 关于遍历：前中后只是访问的位置不同+遍历的左右的前后不同（要有单元性的思想），代码一样，层序遍历更简单，层序遍历是要记住的遍历。
-     * 层序遍历=	5	2	10	1	3	7	11
-     * 中序遍历=	1	2	3	5	7	10	11
-     * 前序遍历=	5	2	1	3	10	7	11
-     * 后序遍历=	2	1	3	10	7	11	5
-     */
+
     public void checkFromNull(U u) {
         if(u == null) throw new IllegalArgumentException("插入的节点为空");
     }
-
+    /**
+     * 关于遍历：前中后只是访问的位置不同+遍历的左右的前后不同（要有单元性的思想），代码一样，层序遍历更简单，层序遍历是要记住的遍历。
+     * 层序遍历（while）: 自上而下，从左到右
+     * 前序遍历（递归）： [根]左右
+     * 中序遍历（递归）: 左[根]右
+     * 后序遍历（递归）： 左右[根]
+     */
     //前序遍历——“根左右”，递归左右子树都要查看是否暂停（visitor.stop）
     protected void preorderTraversal(Node<U> node, Visitor<U> visitor) {
         if(node == null || visitor.stop) return; //如果要操作的节点不存在（下面传递的左右子树），直接返回
@@ -83,15 +83,15 @@ public class BinaryTree<U>  implements BinaryTreeInfo {
         if(visitor.stop) return;
         inorderTraversal(node.right,visitor); //递归右子树
     }
-    //层序遍历
+    //层序遍历——没有用到递归！！
     protected void LevelOrderTraversal(Node<U> node,Visitor<U> visitor) {
-        Queue<Node<U>> us = new LinkedList<>();
-        us.add(node);
-        while (!us.isEmpty()) {
-            Node<U> uNode = us.poll();
-            if(visitor.visit(uNode.unit)) return;
-            if (uNode.left != null) us.add(uNode.left);
-            if (uNode.right != null) us.add(uNode.right);
+        Queue<Node<U>> us = new LinkedList<>(); //需要用到一个队列
+        us.add(node);  //要存入根节点
+        while (!us.isEmpty()) {  //开始进行有机的poll-push
+            Node<U> uNode = us.poll(); //poll一个节点，
+            if(visitor.visit(uNode.unit)) return; //第个节点都会弹出，且按自上而下从左到右输出，我们只需读取每个弹出的节点即可
+            if (uNode.left != null) us.add(uNode.left); //push进该节点的左节点
+            if (uNode.right != null) us.add(uNode.right); //push进该节点的右节点
         }
     }
     //使用递归计算二叉树高度
