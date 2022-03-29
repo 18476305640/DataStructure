@@ -134,3 +134,25 @@ class SimpleSort implements Sort {
     }
 
 }
+//选择排序
+class SelectSort implements Sort{
+
+    @Override
+    public int[] start(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int min_index = i;
+            for (int j = i+1; j < arr.length; j++) {
+                if (arr[min_index] > arr[j]) {
+                    min_index = j;
+                }
+            }
+            if (min_index != i) {
+                int tmp = arr[min_index];
+                arr[min_index] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+
+        return arr;
+    }
+}
