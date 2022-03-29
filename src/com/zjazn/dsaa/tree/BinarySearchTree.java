@@ -28,7 +28,7 @@ public class BinarySearchTree<U> extends BinaryTree<U>  {
         int direction = 0;
         while (parent != null) {
             direction = compare(parent.unit,u); //保存比较值
-            node = parent;
+            node = parent; 
             if(direction > 0) { //parent的大
                 parent = parent.left;
             }else if(direction < 0) { //parent小
