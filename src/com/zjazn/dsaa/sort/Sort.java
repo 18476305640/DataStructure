@@ -134,7 +134,7 @@ class SimpleSort implements Sort {
     }
 
 }
-//选择排序
+//选择排序, arr[i] = max(arr[i] ~ arr[arr.length-1])
 class SelectSort implements Sort{
 
     @Override
@@ -150,7 +150,10 @@ class SelectSort implements Sort{
                 int tmp = arr[min_index];
                 arr[min_index] = arr[i];
                 arr[i] = tmp;
+                
             }
+
+
         }
 
         return arr;

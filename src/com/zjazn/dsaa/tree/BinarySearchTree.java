@@ -155,7 +155,7 @@ public class BinarySearchTree<U> extends BinaryTree<U>  {
         //preorderTraversal 前序
         //postderTraversal 后序
         //LevelOrderTraversal 层序
-        LevelOrderTraversal(root,visitor);
+        inorderTraversal(root,visitor);
     }
     //比较两个节点，返回0时，两个元素相同,大于0左边大
     public int compare(U u1, U u2) {

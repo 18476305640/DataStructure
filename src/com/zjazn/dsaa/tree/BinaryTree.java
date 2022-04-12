@@ -8,7 +8,7 @@ import java.util.Queue;
 
 @SuppressWarnings("unchecked")
 public class BinaryTree<U>  implements BinaryTreeInfo {
-    protected int size = 0;
+    public int size = 0;
     protected Node<U> root;
     protected static class Node<U> {
         U unit;
