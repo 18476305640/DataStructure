@@ -1,11 +1,20 @@
 package org.zhuangjie.tree;
 
+import java.util.Comparator;
+
 /**
  * 平衡二叉搜索树
  * @author zhuangjie
  * @param <E>
  */
-public class AVLTree<E> extends BST<E>{
+public class AVLTree<E> extends BBSTree<E> {
+    public AVLTree(Comparator<E> comparator) {
+        this.comparator = comparator;
+    }
+    public AVLTree() {
+        // 允许不传比较器，但类必须是可比较的（实现了 Comparator）
+    }
+
     @Override
     public Object string(Object node) {
         AVLNode<E> nodeObj = (AVLNode<E>) node;
@@ -91,55 +100,33 @@ public class AVLTree<E> extends BST<E>{
         }
 
     }
-    private void rotateLeft(Node<E> gNode) {
-        /**
-         *     口g              |       口p
-         *        口p           |   口g     口n
-         *           口n        |
-         */
-        Node<E> pNode = gNode.right;
-        // Node<E> nNode = pNode.right;
-        Node<E> pLeftChild = pNode.left;
-        gNode.right = pLeftChild;
-        pNode.left = gNode;
 
-        afterRotate(gNode,pNode,pLeftChild);
-
-
-    }
-
-    private void rotateRight(Node<E> gNode) {
-        /**
-         *         口g        |       口p
-         *      口p           |   口n     口g
-         *   口n              |
-         */
-        Node<E> pNode = gNode.left;
-        // Node<E> nNode = pNode.left;
-        Node<E> pRightChild = pNode.right;
-        gNode.left = pRightChild;
-        pNode.right = gNode;
-        afterRotate(gNode,pNode,pRightChild);
-
-    }
-
-    private void afterRotate(Node<E> gNode, Node<E> pNode, Node<E> nSiblingNode) {
-        if (gNode.isLeftChild()) {
-            gNode.parent.left = pNode;
-        }else if (gNode.isRightChild()) {
-            gNode.parent.right = pNode;
-        }else {
-            root = pNode;
-            pNode.parent = null;
-        }
-        pNode.parent = gNode.parent;
-        gNode.parent = pNode;
-        if (nSiblingNode != null) {
-            nSiblingNode.parent = gNode;
-        }
+    /**
+     * 重写afterRotate添加更新高度逻辑
+     * @param gNode
+     * @param pNode
+     * @param nSiblingNode
+     */
+    @Override
+    protected void afterRotate(Node<E> gNode, Node<E> pNode, Node<E> nSiblingNode) {
+        super.afterRotate(gNode, pNode, nSiblingNode);
         // 更新高度顺序不能变
-        ((AVLNode<E>)gNode).updateHeight();
-        ((AVLNode<E>)pNode).updateHeight();
+        ((AVLTree.AVLNode<E>)gNode).updateHeight();
+        ((AVLTree.AVLNode<E>)pNode).updateHeight();
+    }
+
+    public void remove(E e) {
+        Node<E> node = super.node(e);
+        super.remove(node);
+        while ((node = node.parent) != null) {
+            if (((AVLNode<E>)node).isBalanced()) {
+                // 是平衡的，更新高度
+                ((AVLNode<E>)node).updateHeight();
+            }else {
+                // 不是平衡的，恢复平衡
+                balance(node);
+            }
+        }
     }
 
 }

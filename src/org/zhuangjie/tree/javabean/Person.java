@@ -1,5 +1,7 @@
 package org.zhuangjie.tree.javabean;
 
+import java.util.Objects;
+
 public class Person implements Comparable<Person>{
     private String name;
     private Integer age;
@@ -33,5 +35,20 @@ public class Person implements Comparable<Person>{
     @Override
     public String toString() {
         return ""+this.age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(name, person.name) && Objects.equals(age, person.age);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = Integer.hashCode(age);
+        hash = 31 * hash + (name==null?0:name.hashCode());
+        return hash; // hash == Objects.hash(name, age);
     }
 }
